@@ -66,7 +66,7 @@ export function EisenhowerMatrix() {
       setTasks((prevTasks) => [...prevTasks, newTask]);
       toast({
         title: 'Task Added',
-        description: `Task "${description}" added to Unprioritized.`,
+        description: `Task "${description}" added to My Tasks List.`,
       });
     }
   };
@@ -79,7 +79,7 @@ export function EisenhowerMatrix() {
     );
      toast({
       title: 'Task Moved',
-      description: `Task moved to ${targetQuadrantId === 'unprioritized' ? 'Unprioritized' : targetQuadrantId.charAt(0).toUpperCase() + targetQuadrantId.slice(1)}.`,
+      description: `Task moved to ${targetQuadrantId === 'unprioritized' ? 'My Tasks List' : targetQuadrantId.charAt(0).toUpperCase() + targetQuadrantId.slice(1)}.`,
     });
   };
 
@@ -151,57 +151,61 @@ export function EisenhowerMatrix() {
         {/* Input area at the top */}
         <TaskInput addTask={addTask} />
 
-        {/* Quadrants grid */}
-        <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Quadrant
-            id="do"
-            title="Urgent & Important"
-            description="Do it now"
-            tasks={getTasksByQuadrant('do')}
-            onDropTask={moveTask}
-            onToggleComplete={toggleCompleteTask}
-            onDeleteTask={deleteTask}
-          />
-          <Quadrant
-            id="schedule"
-            title="Not Urgent & Important"
-            description="Schedule it"
-            tasks={getTasksByQuadrant('schedule')}
-            onDropTask={moveTask}
-            onToggleComplete={toggleCompleteTask}
-            onDeleteTask={deleteTask}
-          />
-          <Quadrant
-            id="delegate"
-            title="Urgent & Not Important"
-            description="Delegate it"
-            tasks={getTasksByQuadrant('delegate')}
-            onDropTask={moveTask}
-            onToggleComplete={toggleCompleteTask}
-            onDeleteTask={deleteTask}
-          />
-          <Quadrant
-            id="delete"
-            title="Not Urgent & Not Important"
-            description="Delete it"
-            tasks={getTasksByQuadrant('delete')}
-            onDropTask={moveTask}
-            onToggleComplete={toggleCompleteTask}
-            onDeleteTask={deleteTask}
-          />
-        </div>
+        {/* Main layout: Unprioritized on left, Quadrants grid on right */}
+        <div className="flex-grow grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-         {/* Unprioritized tasks area below quadrants */}
-         <div className="mt-4">
-           <Quadrant
-              id="unprioritized"
-              title="Unprioritized Tasks"
-              tasks={getTasksByQuadrant('unprioritized')}
+          {/* Unprioritized tasks area on the left */}
+          <div className="lg:col-span-1">
+             <Quadrant
+                id="unprioritized"
+                title="My Tasks List" // Updated title
+                tasks={getTasksByQuadrant('unprioritized')}
+                onDropTask={moveTask}
+                onToggleComplete={toggleCompleteTask}
+                onDeleteTask={deleteTask}
+                className="h-full min-h-[300px]" // Ensure it takes full height in its column
+              />
+          </div>
+
+          {/* Quadrants grid on the right */}
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Quadrant
+              id="do"
+              title="Urgent & Important"
+              description="Do it now"
+              tasks={getTasksByQuadrant('do')}
               onDropTask={moveTask}
               onToggleComplete={toggleCompleteTask}
               onDeleteTask={deleteTask}
-              className="min-h-[150px]" // Slightly smaller min-height maybe
             />
+            <Quadrant
+              id="schedule"
+              title="Not Urgent & Important"
+              description="Schedule it"
+              tasks={getTasksByQuadrant('schedule')}
+              onDropTask={moveTask}
+              onToggleComplete={toggleCompleteTask}
+              onDeleteTask={deleteTask}
+            />
+            <Quadrant
+              id="delegate"
+              title="Urgent & Not Important"
+              description="Delegate it"
+              tasks={getTasksByQuadrant('delegate')}
+              onDropTask={moveTask}
+              onToggleComplete={toggleCompleteTask}
+              onDeleteTask={deleteTask}
+            />
+            <Quadrant
+              id="delete"
+              title="Not Urgent & Not Important"
+              description="Delete it"
+              tasks={getTasksByQuadrant('delete')}
+              onDropTask={moveTask}
+              onToggleComplete={toggleCompleteTask}
+              onDeleteTask={deleteTask}
+            />
+          </div>
         </div>
       </main>
     </div>
