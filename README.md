@@ -1,5 +1,5 @@
 
-# Eisenhower Matrix Task Manager
+# Prioritize Now - Eisenhower Matrix Task Manager
 
 The Eisenhower Matrix Task Manager is a web application designed to help you prioritize your tasks based on the principles of the Eisenhower Matrix. This method, also known as the Urgent-Important Matrix, categorizes tasks into four quadrants:
 
