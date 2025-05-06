@@ -12,11 +12,22 @@ interface QuadrantProps {
   title: string;
   tasks: Task[];
   onDropTask: (taskId: string, targetQuadrantId: QuadrantId | 'unprioritized') => void;
+  onToggleComplete: (taskId: string) => void; // Add callback for toggling completion
+  onDeleteTask: (taskId: string) => void; // Add callback for deleting task
   className?: string;
-  description?: string; // Add description prop
+  description?: string;
 }
 
-export function Quadrant({ id, title, tasks, onDropTask, className, description }: QuadrantProps) {
+export function Quadrant({
+  id,
+  title,
+  tasks,
+  onDropTask,
+  onToggleComplete,
+  onDeleteTask,
+  className,
+  description
+}: QuadrantProps) {
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault(); // Necessary to allow dropping
     e.dataTransfer.dropEffect = 'move';
@@ -55,7 +66,12 @@ export function Quadrant({ id, title, tasks, onDropTask, className, description 
           <p className="text-sm text-muted-foreground text-center mt-4">Drop tasks here</p>
         ) : (
           tasks.map((task) => (
-            <TaskItem key={task.id} task={task} />
+            <TaskItem
+              key={task.id}
+              task={task}
+              onToggleComplete={onToggleComplete}
+              onDelete={onDeleteTask}
+            />
           ))
         )}
       </CardContent>

@@ -24,7 +24,12 @@ export default function Home() {
     const storedTasks = localStorage.getItem('prioritizeNowTasks');
     if (storedTasks) {
       try {
-        setTasks(JSON.parse(storedTasks));
+        // Ensure loaded tasks have the 'completed' field, default to false if missing
+        const parsedTasks = JSON.parse(storedTasks).map((task: any) => ({
+          ...task,
+          completed: task.completed ?? false,
+        }));
+        setTasks(parsedTasks);
       } catch (error) {
         console.error("Failed to parse tasks from localStorage", error);
         // Optionally clear corrupted storage
@@ -45,6 +50,7 @@ export default function Home() {
       id: Date.now().toString(), // Simple unique ID generation
       description,
       quadrant: 'unprioritized', // Start in the input area
+      completed: false, // Initialize as not completed
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
   }, []);
@@ -56,6 +62,19 @@ export default function Home() {
       )
     );
   }, []);
+
+  const toggleCompleteTask = useCallback((taskId: string) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+  }, []);
+
+  const deleteTask = useCallback((taskId: string) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+  }, []);
+
 
    // Filter tasks for each quadrant
    const unprioritizedTasks = tasks.filter(task => task.quadrant === 'unprioritized');
@@ -93,6 +112,8 @@ export default function Home() {
             description="Drag tasks from here"
             tasks={unprioritizedTasks}
             onDropTask={moveTask}
+            onToggleComplete={toggleCompleteTask}
+            onDeleteTask={deleteTask}
             className="flex-grow"
           />
         </div>
@@ -107,6 +128,8 @@ export default function Home() {
               description={q.description}
               tasks={quadrantTasks[q.id]}
               onDropTask={moveTask}
+              onToggleComplete={toggleCompleteTask}
+              onDeleteTask={deleteTask}
             />
           ))}
         </div>

@@ -4,4 +4,5 @@ export interface Task {
   id: string;
   description: string;
   quadrant: QuadrantId | 'unprioritized'; // Use 'unprioritized' for new tasks
+  completed: boolean; // Add completed status
 }
