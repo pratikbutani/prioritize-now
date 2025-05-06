@@ -1,21 +1,22 @@
 "use client"
 
 // Inspired by react-hot-toast library
-import * as React from "react"
-
 import type {
   ToastActionElement,
   ToastProps,
 } from "@/components/ui/toast"
+import * as React from "react"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 5000 // Time in ms to wait before removing the toast from memory after it's closed
+const DEFAULT_TOAST_DURATION = 3000 // Default time in ms for a toast to be visible
 
 type ToasterToast = ToastProps & {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
+  duration?: number // Ensure duration is part of the ToasterToast type
 }
 
 const actionTypes = {
@@ -41,7 +42,7 @@ type Action =
     }
   | {
       type: ActionType["UPDATE_TOAST"]
-      toast: Partial<ToasterToast>
+      toast: Partial<ToasterToast> // Allow partial updates
     }
   | {
       type: ActionType["DISMISS_TOAST"]
@@ -140,15 +141,17 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+// Define the type for arguments passed to the toast function
+// This already inherits `duration?: number` from ToastProps via ToasterToast
+type ToastArgs = Omit<ToasterToast, "id">;
 
-function toast({ ...props }: Toast) {
+function toast({ duration = DEFAULT_TOAST_DURATION, ...props }: ToastArgs) {
   const id = genId()
 
-  const update = (props: ToasterToast) =>
+  const update = (updateProps: Partial<ToasterToast>) => // Changed props to updateProps for clarity
     dispatch({
       type: "UPDATE_TOAST",
-      toast: { ...props, id },
+      toast: { ...updateProps, id },
     })
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
 
@@ -161,8 +164,16 @@ function toast({ ...props }: Toast) {
       onOpenChange: (open) => {
         if (!open) dismiss()
       },
+      duration, // Pass duration to the toast
     },
   })
+  
+  // Set a timeout to automatically dismiss the toast
+  if (duration && duration !== Infinity) { // Check if duration is set and not Infinity
+    setTimeout(() => {
+      dismiss();
+    }, duration);
+  }
 
   return {
     id: id,
