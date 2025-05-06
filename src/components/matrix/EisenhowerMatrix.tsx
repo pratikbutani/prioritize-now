@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -11,35 +12,34 @@ import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
 
 // Custom hook for managing state in localStorage
 function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
-  // State to store our value
-  // Pass initial state function to useState so logic is only executed once
-  const [storedValue, setStoredValue] = useState<T>(() => {
+  const [storedValue, setStoredValue] = useState<T>(initialValue); // Always start with initialValue
+
+  // Effect for reading from localStorage on mount (client-side only)
+  useEffect(() => {
+    // This check is crucial for Next.js execution environment
     if (typeof window === 'undefined') {
-      return initialValue;
+      return;
     }
     try {
-      // Get from local storage by key
       const item = window.localStorage.getItem(key);
-      // Parse stored json or if none return initialValue
-      return item ? JSON.parse(item) : initialValue;
+      if (item) {
+        setStoredValue(JSON.parse(item) as T);
+      }
     } catch (error) {
-      // If error also return initialValue
       console.error('Error reading localStorage key “' + key + '”:', error);
-      return initialValue;
+      // Optionally set back to initialValue or handle error
+      // setStoredValue(initialValue); 
     }
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]); // initialValue is intentionally omitted if it's static, to run only once on mount for a given key
+
 
   // useEffect to update local storage when the state changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        // Allow value to be a function so we have same API as useState
-        const valueToStore =
-          typeof storedValue === 'function'
-            ? storedValue(storedValue)
-            : storedValue;
         // Save state
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        window.localStorage.setItem(key, JSON.stringify(storedValue));
       } catch (error) {
         // A more advanced implementation would handle the error case
         console.error('Error writing to localStorage key “' + key + '”:', error);
@@ -211,3 +211,4 @@ export function EisenhowerMatrix() {
     </div>
   );
 }
+
