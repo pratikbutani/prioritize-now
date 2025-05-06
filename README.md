@@ -38,20 +38,22 @@ The primary goal of this project is to provide a simple, intuitive, and effectiv
 To get the project up and running locally, follow these steps:
 
 1.  **Clone the repository:**
- `bash git clone <repository-url>
-  cd eisenhower-matrix-task-manager`
-
+   `git clone <repository-url>`
+  
 2.  **Install dependencies:**
-    `bash npm install`
+    `npm install`
 
 ## Usage
 
 1.  **Start the development server:**
-    `bash npm run dev`
+    `npm run dev`
+
 2.  Open your web browser and navigate to `http://localhost:3000`.
+
 3.  **Adding Tasks:**
     *   Enter a task description in the input field within each quadrant.
     *   Press `Enter` or click the `Add Task` button to add the task to the respective quadrant.
+
 4.  **Managing Tasks:**
     *   **Editing:** Click on a task to edit its description.
     *   **Deleting:** Click the delete button on the task you want to remove.
