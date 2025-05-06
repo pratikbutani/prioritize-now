@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -13,13 +14,35 @@ interface TaskItemProps {
   task: Task;
   onToggleComplete: (taskId: string) => void;
   onDelete: (taskId: string) => void;
+  onDropOnTaskItem: (draggedTaskId: string, targetTaskId: string) => void;
 }
 
-export function TaskItem({ task, onToggleComplete, onDelete }: TaskItemProps) {
+export function TaskItem({ task, onToggleComplete, onDelete, onDropOnTaskItem }: TaskItemProps) {
+  const [isDraggingOver, setIsDraggingOver] = React.useState(false);
+
   const handleDragStart = (e: DragEvent<HTMLDivElement>) => {
-    // Don't allow dragging completed tasks? Or maybe allow? For now, allow.
     e.dataTransfer.setData('text/plain', task.id);
     e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setIsDraggingOver(true);
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+    setIsDraggingOver(false);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation(); 
+    setIsDraggingOver(false);
+    const draggedTaskId = e.dataTransfer.getData('text/plain');
+    if (draggedTaskId && draggedTaskId !== task.id) { 
+      onDropOnTaskItem(draggedTaskId, task.id);
+    }
   };
 
   const handleCheckboxChange = () => {
@@ -32,11 +55,15 @@ export function TaskItem({ task, onToggleComplete, onDelete }: TaskItemProps) {
 
   return (
     <Card
-      draggable={!task.completed} // Optionally disable dragging completed tasks
+      draggable={!task.completed}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver} 
+      onDragLeave={handleDragLeave} 
+      onDrop={handleDrop}         
       className={cn(
-        "mb-2 group", // Add group for hover effects
-        task.completed ? "opacity-70" : "cursor-grab active:cursor-grabbing"
+        "mb-2 group task-item-card", // Added 'task-item-card' for specific targeting
+        task.completed ? "opacity-70" : "cursor-grab active:cursor-grabbing",
+        isDraggingOver ? "border-primary ring-2 ring-primary" : "" // Visual feedback for drop target
       )}
       aria-label={`Task: ${task.description}${task.completed ? ' (Completed)' : ''}`}
     >
@@ -44,7 +71,7 @@ export function TaskItem({ task, onToggleComplete, onDelete }: TaskItemProps) {
         <GripVertical
           className={cn(
             "text-muted-foreground size-4 shrink-0",
-            task.completed ? "invisible" : "" // Hide grip handle when completed
+            task.completed ? "invisible" : ""
           )}
           aria-hidden="true"
         />
@@ -59,7 +86,7 @@ export function TaskItem({ task, onToggleComplete, onDelete }: TaskItemProps) {
           id={`task-desc-${task.id}`}
           htmlFor={`task-${task.id}`}
           className={cn(
-            "text-sm flex-grow break-words cursor-pointer",
+            "text-sm flex-grow break-words", 
             task.completed ? "line-through text-muted-foreground" : ""
           )}
         >
@@ -68,7 +95,7 @@ export function TaskItem({ task, onToggleComplete, onDelete }: TaskItemProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="size-6 shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity" // Show on hover/focus
+          className="size-6 shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
           onClick={handleDeleteClick}
           aria-label={`Delete task: ${task.description}`}
         >
@@ -78,3 +105,4 @@ export function TaskItem({ task, onToggleComplete, onDelete }: TaskItemProps) {
     </Card>
   );
 }
+

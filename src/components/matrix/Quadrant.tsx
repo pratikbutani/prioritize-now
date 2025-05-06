@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -11,9 +12,10 @@ interface QuadrantProps {
   id: QuadrantId | 'unprioritized';
   title: string;
   tasks: Task[];
-  onDropTask: (taskId: string, targetQuadrantId: QuadrantId | 'unprioritized') => void;
-  onToggleComplete: (taskId: string) => void; // Add callback for toggling completion
-  onDeleteTask: (taskId: string) => void; // Add callback for deleting task
+  onDropTask: (taskId: string, targetQuadrantId: QuadrantId | 'unprioritized') => void; // For dropping on quadrant itself
+  onDropOnTaskItem: (draggedTaskId: string, targetTaskId: string) => void; // For dropping on a task item
+  onToggleComplete: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
   className?: string;
   description?: string;
 }
@@ -23,21 +25,24 @@ export function Quadrant({
   title,
   tasks,
   onDropTask,
+  onDropOnTaskItem, // New prop
   onToggleComplete,
   onDeleteTask,
   className,
   description
 }: QuadrantProps) {
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault(); // Necessary to allow dropping
+    e.preventDefault(); 
     e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+  const handleDropOnQuadrant = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent event from bubbling to parent drop zones if nested
     const taskId = e.dataTransfer.getData('text/plain');
-    if (taskId) {
-      onDropTask(taskId, id);
+    // Ensure this drop is directly on the quadrant, not on a task item by checking target
+    if (taskId && (e.target as HTMLElement).closest('.task-item-card') === null) {
+       onDropTask(taskId, id);
     }
   };
 
@@ -46,14 +51,14 @@ export function Quadrant({
     schedule: 'bg-quadrant-schedule',
     delegate: 'bg-quadrant-delegate',
     delete: 'bg-quadrant-delete',
-    unprioritized: 'bg-muted' // Use muted background for unprioritized
-  }[id] || 'bg-card'; // Default to card background
+    unprioritized: 'bg-muted' 
+  }[id] || 'bg-card'; 
 
   return (
     <Card
       onDragOver={handleDragOver}
-      onDrop={handleDrop}
-      className={cn("flex flex-col h-full min-h-[200px] shadow-md", backgroundClass, className)} // Ensure consistent height
+      onDrop={handleDropOnQuadrant} // This handles drops on the quadrant itself
+      className={cn("flex flex-col h-full min-h-[200px] shadow-md", backgroundClass, className)}
       aria-labelledby={`quadrant-title-${id}`}
       aria-describedby={description ? `quadrant-desc-${id}` : undefined}
     >
@@ -71,6 +76,7 @@ export function Quadrant({
               task={task}
               onToggleComplete={onToggleComplete}
               onDelete={onDeleteTask}
+              onDropOnTaskItem={onDropOnTaskItem} // Pass this down
             />
           ))
         )}
@@ -78,3 +84,4 @@ export function Quadrant({
     </Card>
   );
 }
+
