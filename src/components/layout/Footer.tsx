@@ -4,7 +4,7 @@ import React from 'react';
 export function Footer() {
   return (
     <footer className="bg-muted text-muted-foreground p-4 text-center text-sm border-t mt-auto">
-      Made with love by Firebase Studio -{' '}
+      Love at first deploy – Firebase Studio x {' '}
       <a
         href="https://linkedin.com/in/pratikbutani"
         target="_blank"
@@ -13,6 +13,7 @@ export function Footer() {
       >
         Pratik Butani
       </a>
+      {' '}💘👨‍💻
     </footer>
   );
 }
