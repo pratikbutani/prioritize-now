@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -5,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { TaskInput } from '@/components/tasks/TaskInput';
 import { Quadrant } from '@/components/matrix/Quadrant';
 import type { Task, QuadrantId } from '@/types';
+import { downloadFile } from '@/lib/download'; // Import the download utility
 
 // Define quadrant details
 const QUADRANTS: { id: QuadrantId; title: string; description: string }[] = [
@@ -75,6 +77,36 @@ export default function Home() {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   }, []);
 
+   // Export functions
+   const exportTasksAsJson = useCallback(() => {
+     if (!isMounted) return; // Ensure tasks are loaded
+     const jsonData = JSON.stringify(tasks, null, 2); // Pretty print JSON
+     downloadFile(jsonData, 'tasks.json', 'application/json');
+   }, [tasks, isMounted]);
+
+   const exportTasksAsCsv = useCallback(() => {
+     if (!isMounted) return; // Ensure tasks are loaded
+     const headers = ['id', 'description', 'quadrant', 'completed'];
+     const csvRows = [
+       headers.join(','), // Header row
+       ...tasks.map(task =>
+         headers.map(header => {
+           // Escape commas and quotes in description
+           let value = task[header as keyof Task];
+           if (header === 'description' && typeof value === 'string') {
+             // Wrap in quotes if it contains comma or quote, escape internal quotes
+             if (value.includes(',') || value.includes('"')) {
+               value = `"${value.replace(/"/g, '""')}"`;
+             }
+           }
+           return value;
+         }).join(',')
+       )
+     ];
+     const csvData = csvRows.join('\n');
+     downloadFile(csvData, 'tasks.csv', 'text/csv;charset=utf-8;');
+   }, [tasks, isMounted]);
+
 
    // Filter tasks for each quadrant
    const unprioritizedTasks = tasks.filter(task => task.quadrant === 'unprioritized');
@@ -89,7 +121,8 @@ export default function Home() {
     // Optional: Render a loading state or null
      return (
       <div className="flex flex-col min-h-screen">
-        <Header />
+        {/* Pass dummy functions or undefined during loading */}
+        <Header onExportJson={() => {}} onExportCsv={() => {}} />
         <main className="flex-grow p-4 flex flex-col">
             <div className="flex justify-center items-center h-full">
              <p>Loading tasks...</p>
@@ -101,7 +134,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Header />
+       {/* Pass actual export functions when mounted */}
+      <Header onExportJson={exportTasksAsJson} onExportCsv={exportTasksAsCsv} />
       <main className="flex-grow p-4 flex flex-col lg:flex-row gap-4">
         {/* Task Input & Unprioritized Tasks Area */}
         <div className="lg:w-1/4 flex flex-col gap-4">
