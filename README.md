@@ -10,6 +10,9 @@ The Eisenhower Matrix Task Manager is a web application designed to help you pri
 
 This tool helps you focus on what truly matters and delegate or eliminate tasks that don't align with your goals.
 
+![image](https://github.com/user-attachments/assets/16865323-da7d-460f-aa65-1e6ec25bd928)
+
+
 ## Project Goal
 
 The primary goal of this project is to provide a simple, intuitive, and effective tool for personal task management. By using the Eisenhower Matrix, you can:
