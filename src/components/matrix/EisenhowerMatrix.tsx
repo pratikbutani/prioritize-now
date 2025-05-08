@@ -23,23 +23,26 @@ import {
 
 // Custom hook for managing state in localStorage
 function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
-  // State to store our value
-  // Pass initial value function to useState so logic is only executed once
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
-      return initialValue;
+  const [storedValue, setStoredValue] = useState<T>(initialValue);
+
+  // Effect to load from localStorage on the client after the component has mounted
+  useEffect(() => {
+    // This check ensures localStorage is accessed only on the client side
+    if (typeof window !== 'undefined') {
+      try {
+        const item = window.localStorage.getItem(key);
+        if (item !== null) { // Check for null, as empty string is also a valid localStorage value.
+          setStoredValue(JSON.parse(item) as T);
+        }
+        // If item is null, storedValue remains initialValue, which is correct.
+      } catch (error) {
+        console.error('Error reading localStorage key “' + key + '”:', error);
+        // Optionally, fall back to initialValue or handle error appropriately
+        // setStoredValue(initialValue); // This would reset if parsing fails
+      }
     }
-    try {
-      // Get from local storage by key
-      const item = window.localStorage.getItem(key);
-      // Parse stored json or if none return initialValue
-      return item ? (JSON.parse(item) as T) : initialValue;
-    } catch (error) {
-      // If error also return initialValue
-      console.error('Error reading localStorage key “' + key + '”:', error);
-      return initialValue;
-    }
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]); // Only run this effect if the key changes
 
   // Persist to localStorage whenever the storedValue changes
   useEffect(() => {
@@ -61,6 +64,12 @@ export function EisenhowerMatrix() {
   const { toast } = useToast();
   const [isImportConfirmOpen, setIsImportConfirmOpen] = useState(false);
   const [pendingImportTasks, setPendingImportTasks] = useState<Task[] | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
 
   const addTask = (description: string) => {
     if (description.trim()) {
@@ -234,6 +243,7 @@ export function EisenhowerMatrix() {
 
 
   const getTasksByQuadrant = (quadrantId: QuadrantId | 'unprioritized') => {
+    if (!isClient) return []; // Return empty array on server or before client hydration
     return tasks.filter((task) => task.quadrant === quadrantId);
   };
 
@@ -257,7 +267,8 @@ export function EisenhowerMatrix() {
                 onDropOnTaskItem={handleDropOnTaskItem}
                 onToggleComplete={toggleCompleteTask}
                 onDeleteTask={deleteTask}
-                className="h-full min-h-[300px]" 
+                className="h-full min-h-[300px]"
+                isClient={isClient}
               />
           </div>
 
@@ -271,6 +282,7 @@ export function EisenhowerMatrix() {
               onDropOnTaskItem={handleDropOnTaskItem}
               onToggleComplete={toggleCompleteTask}
               onDeleteTask={deleteTask}
+              isClient={isClient}
             />
             <Quadrant
               id="schedule"
@@ -281,6 +293,7 @@ export function EisenhowerMatrix() {
               onDropOnTaskItem={handleDropOnTaskItem}
               onToggleComplete={toggleCompleteTask}
               onDeleteTask={deleteTask}
+              isClient={isClient}
             />
             <Quadrant
               id="delegate"
@@ -291,6 +304,7 @@ export function EisenhowerMatrix() {
               onDropOnTaskItem={handleDropOnTaskItem}
               onToggleComplete={toggleCompleteTask}
               onDeleteTask={deleteTask}
+              isClient={isClient}
             />
             <Quadrant
               id="delete"
@@ -301,6 +315,7 @@ export function EisenhowerMatrix() {
               onDropOnTaskItem={handleDropOnTaskItem}
               onToggleComplete={toggleCompleteTask}
               onDeleteTask={deleteTask}
+              isClient={isClient}
             />
           </div>
         </div>

@@ -18,6 +18,7 @@ interface QuadrantProps {
   onDeleteTask: (taskId: string) => void;
   className?: string;
   description?: string;
+  isClient: boolean; // Added to help with hydration
 }
 
 export function Quadrant({
@@ -29,7 +30,8 @@ export function Quadrant({
   onToggleComplete,
   onDeleteTask,
   className,
-  description
+  description,
+  isClient,
 }: QuadrantProps) {
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault(); 
@@ -67,8 +69,10 @@ export function Quadrant({
         {description && <p id={`quadrant-desc-${id}`} className="text-xs text-muted-foreground text-center mt-1">{description}</p>}
       </CardHeader>
       <CardContent className="p-3 flex-grow overflow-y-auto">
-        {tasks.length === 0 ? (
+        {isClient && tasks.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center mt-4">Drop tasks here</p>
+        ) : !isClient && tasks.length === 0 ? (
+           <p className="text-sm text-muted-foreground text-center mt-4">Loading tasks...</p> // Or a loader
         ) : (
           tasks.map((task) => (
             <TaskItem
