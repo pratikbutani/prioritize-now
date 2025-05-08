@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -7,7 +7,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Download,Upload, FileJson, MoreVertical } from 'lucide-react';
+import { Download, Upload, FileJson, MoreVertical, Info } from 'lucide-react';
+import { OnboardingDialog } from '@/components/onboarding/OnboardingDialog';
 
 interface HeaderProps {
   onExportJson: () => void;
@@ -17,6 +18,7 @@ interface HeaderProps {
 
 export function Header({ onExportJson, onImportJson, onDownloadSampleJson }: HeaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
@@ -32,41 +34,51 @@ export function Header({ onExportJson, onImportJson, onDownloadSampleJson }: Hea
   };
 
   return (
-    <header className="bg-primary text-primary-foreground p-4 shadow-md flex items-center justify-between">
-      <div className="w-1/3"></div> {/* Spacer */}
-      <h1 className="text-2xl font-bold text-center w-1/3">Prioritize Now</h1>
-      <div className="flex gap-2 w-1/3 justify-end">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon" aria-label="Task options">
-              <MoreVertical className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onDownloadSampleJson}>
-              <FileJson className="mr-2 h-4 w-4" />
-              Download Sample JSON
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleImportClick}>
-              <Upload className="mr-2 h-4 w-4" />
-              Import JSON
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={onExportJson}>
-              <Download className="mr-2 h-4 w-4" />
-              Export JSON
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept=".json"
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
-      </div>
-    </header>
+    <>
+      <header className="bg-primary text-primary-foreground p-4 shadow-md flex items-center justify-between">
+        <div className="w-1/3"></div> {/* Spacer */}
+        <h1 className="text-2xl font-bold text-center w-1/3">Prioritize Now</h1>
+        <div className="flex gap-2 w-1/3 justify-end items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsOnboardingOpen(true)}
+            aria-label="Show onboarding information"
+            className="text-primary-foreground hover:bg-primary/80 focus-visible:ring-primary-foreground"
+          >
+            <Info className="h-5 w-5" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon" aria-label="Task options">
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={onDownloadSampleJson}>
+                <FileJson className="mr-2 h-4 w-4" />
+                Download Sample JSON
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleImportClick}>
+                <Upload className="mr-2 h-4 w-4" />
+                Import JSON
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onExportJson}>
+                <Download className="mr-2 h-4 w-4" />
+                Export JSON
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept=".json"
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+        </div>
+      </header>
+      <OnboardingDialog open={isOnboardingOpen} onOpenChange={setIsOnboardingOpen} />
+    </>
   );
 }
-
-
