@@ -104,6 +104,21 @@ export function OnboardingDialog({ open, onOpenChange }: OnboardingDialogProps) 
               This application is a Progressive Web App (PWA). You can install it on your desktop or mobile device for an app-like experience and offline access. Look for an &quot;Install&quot; button in your browser&apos;s address bar or menu.
             </p>
           </section>
+          <section>
+            <h3 className="font-semibold text-base mb-1">Open Source</h3>
+            <p>
+              This project is open source! You can find the code and contribute on{' '}
+              <a
+                href="https://github.com/pratikbutani/prioritize-now"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline hover:text-primary/80"
+              >
+                GitHub
+              </a>
+              .
+            </p>
+          </section>
         </div>
         </ScrollArea>
         <DialogFooter>
