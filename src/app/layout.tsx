@@ -74,11 +74,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-       <head>
+      <head>
          {/* theme-color is now in viewport, but can be kept here as fallback if needed */}
          {/* <meta name="theme-color" content="#3498db" /> */}
          <GoogleAnalytics /> {/* Add Google Analytics script */}
-       </head>
+      </head>
       {/* Use GeistSans.variable for the font class */}
       <body className={`${GeistSans.variable} antialiased`}>
         {children}
@@ -87,3 +87,4 @@ export default function RootLayout({
     </html>
   );
 }
+
