@@ -1,7 +1,9 @@
+
 import type { Metadata, Viewport } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster'; // Import Toaster
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'; // Import GoogleAnalytics
 
 const APP_NAME = 'Prioritize Now - Eisenhower Matrix';
 const APP_DESCRIPTION = 'Boost productivity by organizing tasks with the Urgent-Important Eisenhower Matrix. Add, prioritize, and manage your to-do list effectively. Works offline as a PWA.';
@@ -58,7 +60,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#3498db',
+  themeColor: '#3498db', // Calm Blue from globals.css --primary HSL(207, 70%, 40%) approx #2471A3. Updated to match manifest.
   width: 'device-width',
   initialScale: 1,
   // minimumScale: 1, // Optional
@@ -75,6 +77,7 @@ export default function RootLayout({
        <head>
          {/* theme-color is now in viewport, but can be kept here as fallback if needed */}
          {/* <meta name="theme-color" content="#3498db" /> */}
+         <GoogleAnalytics /> {/* Add Google Analytics script */}
        </head>
       {/* Use GeistSans.variable for the font class */}
       <body className={`${GeistSans.variable} antialiased`}>
