@@ -23,45 +23,34 @@ import {
 
 // Custom hook for managing state in localStorage
 function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
-  const [storedValue, setStoredValue] = useState<T>(initialValue);
-  const [isInitialized, setIsInitialized] = useState(false);
+  // State to store our value
+  // Pass initial value function to useState so logic is only executed once
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    if (typeof window === 'undefined') {
+      return initialValue;
+    }
+    try {
+      // Get from local storage by key
+      const item = window.localStorage.getItem(key);
+      // Parse stored json or if none return initialValue
+      return item ? (JSON.parse(item) as T) : initialValue;
+    } catch (error) {
+      // If error also return initialValue
+      console.error('Error reading localStorage key “' + key + '”:', error);
+      return initialValue;
+    }
+  });
 
+  // Persist to localStorage whenever the storedValue changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        const item = window.localStorage.getItem(key);
-        if (item) {
-          setStoredValue(JSON.parse(item) as T);
-        } else {
-          // Only set initialValue if it's not already the default state
-          // This prevents overwriting an empty array if that's the desired initial state
-          if (JSON.stringify(storedValue) !== JSON.stringify(initialValue)) {
-            setStoredValue(initialValue);
-             // And also write it to localStorage if it's the first load and localStorage is empty
-            window.localStorage.setItem(key, JSON.stringify(initialValue));
-          }
-        }
+        window.localStorage.setItem(key, JSON.stringify(storedValue));
       } catch (error) {
-        console.error('Error reading localStorage key “' + key + '”:', error);
-        setStoredValue(initialValue);
+        console.error('Error setting localStorage key “' + key + '”:', error);
       }
-      setIsInitialized(true);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, initialValue]); // Removed storedValue from dependency array to avoid loop
-
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && isInitialized) {
-        // Only write to localStorage if the value has actually changed from what was loaded or initialized
-        // This check helps prevent unnecessary writes or potential race conditions.
-        const currentLocalStorageValue = window.localStorage.getItem(key);
-        const storedValueJSON = JSON.stringify(storedValue);
-        if (currentLocalStorageValue !== storedValueJSON) {
-             window.localStorage.setItem(key, storedValueJSON);
-        }
-    }
-  }, [key, storedValue, isInitialized]);
+  }, [key, storedValue]);
 
   return [storedValue, setStoredValue];
 }
