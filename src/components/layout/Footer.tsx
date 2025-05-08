@@ -9,7 +9,7 @@ export function Footer() {
         href="http://firebase.studio/"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-primary hover:underline"
+        className="text-primary underline hover:text-primary/80"
       >
         Firebase Studio
       </a>
@@ -18,7 +18,7 @@ export function Footer() {
         href="https://linkedin.com/in/pratikbutani"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-primary hover:underline"
+        className="text-primary underline hover:text-primary/80"
       >
         Pratik Butani
       </a>
