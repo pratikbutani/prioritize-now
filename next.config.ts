@@ -30,3 +30,4 @@ const nextConfig: NextConfig = {
 };
 
 export default withPWA(nextConfig); // Wrap the config with withPWA
+
