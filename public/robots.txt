@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Disallow specific paths if needed, for example:
+# Disallow: /private/
+# Disallow: /admin/
+
+Sitemap: https://prioritize-now.vercel.app/sitemap.xml
+
+# The following Disallow rules were provided by the user,
+# but might not be applicable to this Next.js application.
+# Review and adjust as necessary.
+# Disallow: /cgi-bin/
+# Disallow: /images/ # Note: Next.js usually serves images from /_next/image or /public/images
+# Disallow: /pages/thankyou.html # Note: Next.js uses a different routing structure
