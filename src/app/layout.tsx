@@ -77,7 +77,7 @@ export default function RootLayout({
       <head>
          {/* theme-color is now in viewport, but can be kept here as fallback if needed */}
          {/* <meta name="theme-color" content="#3498db" /> */}
-         <GoogleAnalytics /> {/* Add Google Analytics script */}
+          <GoogleAnalytics/>{''}
       </head>
       {/* Use GeistSans.variable for the font class */}
       <body className={`${GeistSans.variable} antialiased`}>
