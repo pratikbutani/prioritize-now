@@ -86,7 +86,7 @@ export function TaskItem({ task, onToggleComplete, onDelete, onDropOnTaskItem }:
           id={`task-desc-${task.id}`}
           htmlFor={`task-${task.id}`}
           className={cn(
-            "text-sm flex-grow break-words", 
+            "text-sm flex-grow break-words break-all", 
             task.completed ? "line-through text-muted-foreground" : ""
           )}
         >

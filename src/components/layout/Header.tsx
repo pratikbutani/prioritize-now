@@ -50,7 +50,12 @@ export function Header({ onExportJson, onImportJson, onDownloadSampleJson }: Hea
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" aria-label="Task options">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                aria-label="Task options"
+                className="text-primary-foreground hover:bg-primary/80 focus-visible:ring-primary-foreground"
+              >
                 <MoreVertical className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
@@ -82,3 +87,4 @@ export function Header({ onExportJson, onImportJson, onDownloadSampleJson }: Hea
     </>
   );
 }
+
