@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 // Replace with your actual deployed URL
-const URL = 'https://prioritize-now.vercel.app';
+const URL = 'https://done.pratikbutani.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
