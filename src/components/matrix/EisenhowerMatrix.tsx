@@ -24,39 +24,44 @@ import {
 // Custom hook for managing state in localStorage
 function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    try {
-      const item = window.localStorage.getItem(key);
-      if (item) {
-        setStoredValue(JSON.parse(item) as T);
-      } else {
-        setStoredValue(initialValue); // Ensure initialValue is set if nothing in localStorage
-      }
-    } catch (error) {
-      console.error('Error reading localStorage key “' + key + '”:', error);
-      setStoredValue(initialValue);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
-
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      if (storedValue === undefined || storedValue === null) {
-        // Avoid writing undefined/null if initialValue was used due to localStorage miss
-        // Or if initialValue itself is undefined/null - though it shouldn't typically be for 'tasks'
-        if (initialValue !== undefined && initialValue !== null) {
-             window.localStorage.setItem(key, JSON.stringify(initialValue));
+      try {
+        const item = window.localStorage.getItem(key);
+        if (item) {
+          setStoredValue(JSON.parse(item) as T);
+        } else {
+          // Only set initialValue if it's not already the default state
+          // This prevents overwriting an empty array if that's the desired initial state
+          if (JSON.stringify(storedValue) !== JSON.stringify(initialValue)) {
+            setStoredValue(initialValue);
+             // And also write it to localStorage if it's the first load and localStorage is empty
+            window.localStorage.setItem(key, JSON.stringify(initialValue));
+          }
         }
-      } else {
-        window.localStorage.setItem(key, JSON.stringify(storedValue));
+      } catch (error) {
+        console.error('Error reading localStorage key “' + key + '”:', error);
+        setStoredValue(initialValue);
       }
+      setIsInitialized(true);
     }
-  }, [key, storedValue, initialValue]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, initialValue]); // Removed storedValue from dependency array to avoid loop
+
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isInitialized) {
+        // Only write to localStorage if the value has actually changed from what was loaded or initialized
+        // This check helps prevent unnecessary writes or potential race conditions.
+        const currentLocalStorageValue = window.localStorage.getItem(key);
+        const storedValueJSON = JSON.stringify(storedValue);
+        if (currentLocalStorageValue !== storedValueJSON) {
+             window.localStorage.setItem(key, storedValueJSON);
+        }
+    }
+  }, [key, storedValue, isInitialized]);
 
   return [storedValue, setStoredValue];
 }
@@ -79,7 +84,7 @@ export function EisenhowerMatrix() {
       setTasks((prevTasks) => [newTask, ...prevTasks]); // Add to the beginning of unprioritized
       toast({
         title: 'Task Added',
-        description: `Task "${description}" added to My Tasks List.`,
+        description: 'New task added to My Tasks List.',
       });
     }
   };
