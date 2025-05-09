@@ -36,9 +36,11 @@ export function Header({ onExportJson, onImportJson, onDownloadSampleJson }: Hea
   return (
     <>
       <header className="bg-primary text-primary-foreground p-4 shadow-md flex items-center justify-between">
-        <div className="w-1/3"></div> {/* Spacer */}
-        <h1 className="text-2xl font-bold text-center w-1/3">Prioritize Now</h1>
-        <div className="flex gap-2 w-1/3 justify-end items-center">
+        <div className="w-[5.5rem] flex-shrink-0"></div> {/* Left spacer for balance, width matches right controls */}
+        <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-center flex-grow px-1 whitespace-nowrap overflow-hidden text-ellipsis">
+          Prioritize Now
+        </h1>
+        <div className="w-[5.5rem] flex-shrink-0 flex gap-2 justify-end items-center">
           <Button
             variant="ghost"
             size="icon"
@@ -87,4 +89,3 @@ export function Header({ onExportJson, onImportJson, onDownloadSampleJson }: Hea
     </>
   );
 }
-
