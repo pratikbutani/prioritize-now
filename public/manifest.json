@@ -1,12 +1,12 @@
 {
   "name": "Prioritize Now - Eisenhower Matrix",
-  "short_name": "PrioritizeNow",
-  "description": "Boost productivity by organizing tasks with the Urgent-Important Eisenhower Matrix. Add, prioritize, and manage your to-do list effectively. Works offline as a PWA.",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
+  "short_name": "Prioritize Now",
   "theme_color": "#3498db",
-  "orientation": "portrait-primary",
+  "background_color": "transparent",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
     {
       "src": "/icons/1024.png",
