@@ -37,8 +37,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/icons/og-image.png', // Replace with your actual OG image path
-        width: 1200,
-        height: 630,
+        width: 1024,
+        height: 500,
         alt: 'Prioritize Now - Eisenhower Matrix Application',
       },
     ],
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     },
     description: APP_DESCRIPTION,
     images: ['/icons/og-image.png'], // Replace with your actual Twitter image path
-    // creator: "@yourtwitterhandle", // Add your Twitter handle if you have one
+    creator: "@pratik13butani", // Add your Twitter handle if you have one
   },
   keywords: ['Eisenhower Matrix', 'Task Management', 'Productivity', 'To-Do List', 'Prioritization', 'Urgent Important Matrix', 'PWA'],
   authors: [{ name: 'Pratik Butani', url: 'https://linkedin.com/in/pratikbutani' }],
