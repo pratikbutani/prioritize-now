@@ -105,7 +105,7 @@ export function OnboardingDialog({ open, onOpenChange }: OnboardingDialogProps) 
             </p>
           </section>
           <section>
-            <h3 className="font-semibold text-base mb-1">Open Source</h3>
+            <h3 className="font-semibold text-base mb-1">Project Links</h3>
             <p>
               This project is open source! You can find the code and contribute on{' '}
               <a
@@ -115,6 +115,18 @@ export function OnboardingDialog({ open, onOpenChange }: OnboardingDialogProps) 
                 className="text-primary underline hover:text-primary/80"
               >
                 GitHub
+              </a>
+              .
+            </p>
+            <p className="mt-1">
+              Also, check out the project on{' '}
+              <a
+                href="https://peerlist.io/pratikbutani/project/prioritize-now"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline hover:text-primary/80"
+              >
+                Peerlist
               </a>
               .
             </p>
